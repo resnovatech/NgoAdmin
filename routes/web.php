@@ -1,65 +1,81 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Backend\DashboardController;
-use App\Http\Controllers\Backend\RolesController;
-use App\Http\Controllers\Backend\UsersController;
-use App\Http\Controllers\Backend\PermissionController;
-use App\Http\Controllers\Backend\AdminsController;
-use App\Http\Controllers\Backend\ProfileController;
-use App\Http\Controllers\Backend\SystemInformationController;
-use App\Http\Controllers\Backend\Auth\LoginController;
-//use App\Http\Controllers\Backend\Auth\ForgetPasswordController;
-use App\Http\Controllers\Admin\SessionController;
-use App\Http\Controllers\Admin\ForgetPasswordController;
-use App\Http\Controllers\Admin\CurrencyController;
-use App\Http\Controllers\Admin\TaxController;
-use App\Http\Controllers\Admin\GeneralController;
-use App\Http\Controllers\Admin\InvoicesettingController;
-use App\Http\Controllers\Admin\CreditnotesController;
-use App\Http\Controllers\Admin\EstimateController;
-use App\Http\Controllers\Admin\ClientController;
-use App\Http\Controllers\Admin\VendorController;
-use App\Http\Controllers\Admin\BrandController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\SubcategoryController;
-use App\Http\Controllers\Admin\UnitController;
-use App\Http\Controllers\Admin\WarehouseController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\SellController;
-use App\Http\Controllers\Admin\PurchaseController;
-use App\Http\Controllers\Admin\RequisitionController;
-use App\Http\Controllers\Admin\MenuController;
-use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\PbannerController;
-use App\Http\Controllers\Admin\MnotificationController;
-use App\Http\Controllers\FrontController;
-use App\Http\Controllers\SearchController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\Admin\CartController;
-use App\Http\Controllers\Admin\CimageController;
-use App\Http\Controllers\Admin\RoomController;
-use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\Auth\LoginController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\DashBoardController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SystemInformationController;
 use App\Http\Controllers\Admin\RegisterController;
 use App\Http\Controllers\Admin\CountryController;
 use App\Http\Controllers\Admin\CivilController;
 use App\Http\Controllers\Admin\NameCangeController;
 use App\Http\Controllers\Admin\RenewController;
+use App\Http\Controllers\Admin\Fd9Controller;
+use App\Http\Controllers\Admin\Fd9OneController;
+use App\Http\Controllers\Admin\BranchController;
+use App\Http\Controllers\Admin\DesignationController;
+use App\Http\Controllers\Admin\DesignationStepController;
+use App\Http\Controllers\Admin\NoticeController;
+use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\FD6Controller;
+use App\Http\Controllers\Admin\FD7Controller;
+use App\Http\Controllers\Admin\Fc1Controller;
+use App\Http\Controllers\Admin\Fc2Controller;
+use App\Http\Controllers\Admin\FD3Controller;
+use App\Http\Controllers\Admin\DocumentPresentController;
+use App\Http\Controllers\Admin\DocumentTypeController;
+use App\Http\Controllers\Admin\ChildNoteController;
+use App\Http\Controllers\Admin\ParentNoteController;
+use App\Http\Controllers\Admin\OfficeSarokController;
+use App\Http\Controllers\Admin\NothiPrapokController;
+use App\Http\Controllers\Admin\NothiAttractController;
+use App\Http\Controllers\Admin\NothiCopyController;
+use App\Http\Controllers\Admin\NothiApproverController;
+use App\Http\Controllers\Admin\NothiSenderController;
+use App\Http\Controllers\Admin\SendNothiController;
+use App\Http\Controllers\Admin\ReceiveNothiController;
+use App\Http\Controllers\NGO\PotroController;
+use App\Http\Controllers\Admin\NothiJatController;
+use App\Http\Controllers\Admin\ExecutiveCommitteeController;
+use App\Http\Controllers\Admin\ConstitutionController;
+use App\Http\Controllers\Admin\DuplicateCertificateController;
+use App\Http\Controllers\Admin\Fd5Controller;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\TaskManagerController;
+use App\Http\Controllers\Admin\EventController;
+use App\Http\Controllers\Admin\ComplainMonitorController;
+use App\Http\Controllers\Admin\LeaveManagementController;
+use App\Http\Controllers\Admin\ProjectSubjectController;
+use App\Http\Controllers\Admin\FormNoFiveController;
+use App\Http\Controllers\Admin\FormNoSevenController;
+use App\Http\Controllers\Admin\NgoProfileController;
+use App\Http\Controllers\Admin\FormNoFourController;
+use App\Http\Controllers\Admin\Fd4OneController;
+use App\Http\Controllers\Admin\ProkolpoGraphicalReportController;
+
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
 |--------------------------------------------------------------------------
 |
 | Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
 |
 */
 
+// Route::get('/', function () {
+//     return view('admin.auth.login');
+// });
 
-Route::get('/', function () {
-    return view('backend.auth.login');
-});
+
+Route::get('/', [App\Http\Controllers\HomeController::class, 'mainLogin'])->name('mainLogin');
 
 Route::get('/clear', function() {
     \Illuminate\Support\Facades\Artisan::call('cache:clear');
@@ -67,197 +83,579 @@ Route::get('/clear', function() {
     \Illuminate\Support\Facades\Artisan::call('config:cache');
     \Illuminate\Support\Facades\Artisan::call('view:clear');
     \Illuminate\Support\Facades\Artisan::call('route:clear');
-    return redirect()->back();
+    return 'Cleared!';
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::controller(ChildNoteController::class)->group(function () {
+
+Route::get('/printPotrangsoPdfForEmail/{status}/{parentId}/{nothiId}/{id}', 'printPotrangsoPdfForEmail')->name('printPotrangsoPdfForEmail');
+
+});
+
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+    Route::resource('prokolpoGraphicalReport', ProkolpoGraphicalReportController::class);
+    Route::resource('ngoProfile', NgoProfileController::class);
+
+    Route::resource('leaveManagement', LeaveManagementController::class);
 
 
-    Route::get('country', [CountryController::class, 'index'])->name('admin.country');
-    Route::post('country/store', [CountryController::class, 'store'])->name('admin.country.store');
-    Route::post('country/update', [CountryController::class, 'update'])->name('admin.country.update');
-    Route::delete('country/delete/{id}', [CountryController::class, 'delete'])->name('admin.country.delete');
+    Route::controller(ProkolpoGraphicalReportController::class)->group(function () {
+
+        Route::get('/graphicReportFilterDistrict', 'graphicReportFilterDistrict')->name('graphicReportFilterDistrict');
+        Route::get('/graphicReportFilter', 'graphicReportFilter')->name('graphicReportFilter');
+
+    });
 
 
-    Route::get('civil_info', [CivilController::class, 'index'])->name('admin.civil_info');
-    Route::post('civil_info/store', [CivilController::class, 'store'])->name('admin.civil_info.store');
-    Route::post('civil_info/update', [CivilController::class, 'update'])->name('admin.civil_info.update');
-    Route::delete('civil_info/delete/{id}', [CivilController::class, 'delete'])->name('admin.civil_info.delete');
 
+Route::resource('formNoFour', FormNoFourController::class);
+Route::resource('fd4OneForm', Fd4OneController::class);
+
+Route::controller(FormNoFourController::class)->group(function () {
+    Route::post('/statusUpdateForformNoFour', 'statusUpdateForformNoFour')->name('statusUpdateForformNoFour');
+
+});
+
+Route::controller(Fd4OneController::class)->group(function () {
+    Route::post('/statusUpdateForfd4OneForm', 'statusUpdateForfd4OneForm')->name('statusUpdateForfd4OneForm');
+
+});
+
+
+    Route::resource('formNoFive', FormNoFiveController::class);
+
+    Route::controller(FormNoFiveController::class)->group(function () {
+        Route::post('/statusUpdateForformNoFive', 'statusUpdateForformNoFive')->name('statusUpdateForformNoFive');
+        Route::get('formNoFiveRetaltedPdf/{title}/{id}', 'formNoFiveRetaltedPdf')->name('formNoFiveRetaltedPdf');
+    });
+
+    Route::resource('formNoSeven', FormNoSevenController::class);
+
+    Route::controller(FormNoSevenController::class)->group(function () {
+        Route::post('/statusUpdateForformNoSeven', 'statusUpdateForformNoSeven')->name('statusUpdateForformNoSeven');
+        Route::get('formNoSevenRetaltedPdf/{title}/{id}', 'formNoSevenRetaltedPdf')->name('formNoSevenRetaltedPdf');
+    });
+
+
+
+
+    Route::controller(LeaveManagementController::class)->group(function () {
+
+        Route::get('/receivedApplicationEdit/{id}', 'receivedApplicationEdit')->name('receivedApplicationEdit');
+        Route::get('/sentApplicationEdit/{id}', 'sentApplicationEdit')->name('sentApplicationEdit');
+        Route::get('/sentApplication', 'sentApplication')->name('sentApplication');
+        Route::get('/receivedApplication', 'receivedApplication')->name('receivedApplication');
+
+    });
+
+    Route::resource('projectSubject', ProjectSubjectController::class);
+    Route::resource('complainManager', ComplainMonitorController::class);
+
+    Route::controller(ComplainMonitorController::class)->group(function () {
+
+        Route::get('/allComplain', 'allComplain')->name('allComplain');
+        Route::get('/ongoingComplain', 'ongoingComplain')->name('ongoingComplain');
+        Route::get('/completeComplain', 'completeComplain')->name('completeComplain');
+        Route::get('/rejectedComplain', 'rejectedComplain')->name('rejectedComplain');
+        Route::get('/viewComplainDetail/{id}', 'viewComplainDetail')->name('viewComplainDetail');
+        Route::get('/updateComplainStatus', 'updateComplainStatus')->name('updateComplainStatus');
+
+    });
+
+
+
+    Route::resource('eventManager', EventController::class);
+    Route::resource('taskManager', TaskManagerController::class);
+
+    Route::controller(TaskManagerController::class)->group(function () {
+
+        Route::put('/taskManagerAssign/{id}', 'taskManagerAssign')->name('taskManagerAssign');
+        Route::get('/taskManagerType', 'taskManagerType')->name('taskManagerType');
+        Route::put('/taskManagerTypeUpdate/{id}', 'taskManagerTypeUpdate')->name('taskManagerTypeUpdate');
+
+    });
+
+    Route::controller(ReportController::class)->group(function () {
+
+        Route::get('/prokolpoReportDistrict', 'prokolpoReportDistrict')->name('prokolpoReportDistrict');
+        Route::get('/prokolpoReportSearch', 'prokolpoReportSearch')->name('prokolpoReportSearch');
+        Route::get('/prokolpoReport', 'prokolpoReport')->name('prokolpoReport');
+        Route::get('/prokolpoReportPrint', 'prokolpoReportPrint')->name('prokolpoReportPrint');
+        Route::get('/prokolpoReportPrintSearchNormal', 'prokolpoReportPrintSearchNormal')->name('prokolpoReportPrintSearchNormal');
+        Route::get('/prokolpoReportPrintSearch', 'prokolpoReportPrintSearch')->name('prokolpoReportPrintSearch');
+
+
+        //start Beneficiaries list
+
+        Route::get('/prokolpoBeneficiariesReportDistrict', 'prokolpoBeneficiariesReportDistrict')->name('prokolpoBeneficiariesReportDistrict');
+        Route::get('/prokolpoBeneficiariesReportSearch', 'prokolpoBeneficiariesReportSearch')->name('prokolpoBeneficiariesReportSearch');
+        Route::get('/prokolpoBeneficiariesReport', 'prokolpoBeneficiariesReport')->name('prokolpoBeneficiariesReport');
+        Route::get('/prokolpoBeneficiariesReportPrint', 'prokolpoBeneficiariesReportPrint')->name('prokolpoBeneficiariesReportPrint');
+        Route::get('/prokolpoBeneficiariesReportPrintSearchNormal', 'prokolpoBeneficiariesReportPrintSearchNormal')->name('prokolpoBeneficiariesReportPrintSearchNormal');
+        Route::get('/prokolpoBeneficiariesReportPrintSearch', 'prokolpoBeneficiariesReportPrintSearch')->name('prokolpoBeneficiariesReportPrintSearch');
+
+        //end Beneficiaries list
+
+
+        Route::get('/monthlyReportOfNgoSearch', 'monthlyReportOfNgoSearch')->name('monthlyReportOfNgoSearch');
+        Route::get('/yearlyReportOfNgoSearch', 'yearlyReportOfNgoSearch')->name('yearlyReportOfNgoSearch');
+        Route::get('/monthlyReportOfNgo', 'monthlyReportOfNgo')->name('monthlyReportOfNgo');
+        Route::get('/yearlyReportOfNgo', 'yearlyReportOfNgo')->name('yearlyReportOfNgo');
+        Route::get('/monthlyReportOfNgoPrint', 'monthlyReportOfNgoPrint')->name('monthlyReportOfNgoPrint');
+        Route::get('/monthlyReportOfNgoSearchPrint/{month}/{to}/{year}/{type}', 'monthlyReportOfNgoSearchPrint')->name('monthlyReportOfNgoSearchPrint');
+        Route::get('/yearlyReportOfNgoPrint', 'yearlyReportOfNgoPrint')->name('yearlyReportOfNgoPrint');
+        Route::get('/yearlyReportOfNgoSearchPrint/{fromYear}/{toYear}/{type}', 'yearlyReportOfNgoSearchPrint')->name('yearlyReportOfNgoSearchPrint');
+        Route::get('/monthlyReportOfNgoRenewSearch', 'monthlyReportOfNgoRenewSearch')->name('monthlyReportOfNgoRenewSearch');
+        Route::get('/yearlyReportOfNgoRenewSearch', 'yearlyReportOfNgoRenewSearch')->name('yearlyReportOfNgoRenewSearch');
+        Route::get('/monthlyReportOfNgoRenew', 'monthlyReportOfNgoRenew')->name('monthlyReportOfNgoRenew');
+        Route::get('/yearlyReportOfNgoRenew', 'yearlyReportOfNgoRenew')->name('yearlyReportOfNgoRenew');
+        Route::get('/monthlyReportOfNgoRenewSearchPrint/{month}/{to}/{year}/{type}', 'monthlyReportOfNgoRenewSearchPrint')->name('monthlyReportOfNgoRenewSearchPrint');
+        Route::get('/yearlyReportOfNgoRenewSearchPrint/{fromYear}/{toYear}/{type}', 'yearlyReportOfNgoRenewSearchPrint')->name('yearlyReportOfNgoRenewSearchPrint');
+        Route::get('/yearlyReportOfNgoRenewPrint', 'yearlyReportOfNgoRenewPrint')->name('yearlyReportOfNgoRenewPrint');
+        Route::get('/monthlyReportOfNgoRenewPrint', 'monthlyReportOfNgoRenewPrint')->name('monthlyReportOfNgoRenewPrint');
+        Route::get('/localNgoListReport', 'localNgoListReport')->name('localNgoListReport');
+        Route::get('/foreignNgoListReport', 'foreignNgoListReport')->name('foreignNgoListReport');
+        Route::get('/localNgoListSearch', 'localNgoListSearch')->name('localNgoListSearch');
+        Route::get('/foreignNgoListSearch', 'foreignNgoListSearch')->name('foreignNgoListSearch');
+        Route::get('/districtWiseListResult', 'districtWiseListResult')->name('districtWiseListResult');
+        Route::get('/districtWiseList', 'districtWiseList')->name('districtWiseList');
+        Route::get('/districtWiseListSearch', 'districtWiseListSearch')->name('districtWiseListSearch');
+
+    });
+
+    Route::controller(NothiJatController::class)->group(function () {
+
+        Route::get('/returnToAgotoDak/{id}/{status}', 'returnToAgotoDak')->name('returnToAgotoDak');
+        Route::get('/nothiJatDakList', 'nothiJatDakList')->name('nothiJatDakList');
+        Route::get('/updateNothiJat', 'updateNothiJat')->name('updateNothiJat');
+        Route::get('/searchResultNothiJat', 'searchResultNothiJat')->name('searchResultNothiJat');
+        Route::get('/searchResultNothiJatFdSix', 'searchResultNothiJatFdSix')->name('searchResultNothiJatFdSix');
+        Route::get('/searchResultNothiJatFdSeven', 'searchResultNothiJatFdSeven')->name('searchResultNothiJatFdSeven');
+        Route::get('/searchResultNothiJatFcOne', 'searchResultNothiJatFcOne')->name('searchResultNothiJatFcOne');
+        Route::get('/searchResultNothiJatFcTwo', 'searchResultNothiJatFcTwo')->name('searchResultNothiJatFcTwo');
+        Route::get('/searchResultNothiJatFdThree', 'searchResultNothiJatFdThree')->name('searchResultNothiJatFdThree');
+        Route::get('/searchResultNothiJatDuplicateCertificate', 'searchResultNothiJatDuplicateCertificate')->name('searchResultNothiJatDuplicateCertificate');
+        Route::get('/searchResultNothiJatConstitution', 'searchResultNothiJatConstitution')->name('searchResultNothiJatConstitution');
+        Route::get('/searchResultNothiJatCommittee', 'searchResultNothiJatCommittee')->name('searchResultNothiJatCommittee');
+        Route::get('/searchResultNothiJatFdFive', 'searchResultNothiJatFdFive')->name('searchResultNothiJatFdFive');
+        Route::get('/searchResultNothiJatFdNineOne', 'searchResultNothiJatFdNineOne')->name('searchResultNothiJatFdNineOne');
+        Route::get('/searchResultNothiJatFdNine', 'searchResultNothiJatFdNine')->name('searchResultNothiJatFdNine');
+        Route::get('/searchResultNothiJatNameChange', 'searchResultNothiJatNameChange')->name('searchResultNothiJatNameChange');
+        Route::get('/searchResultNothiJatRenew', 'searchResultNothiJatRenew')->name('searchResultNothiJatRenew');
+
+    });
+
+
+    Route::resource('potroList', PotroController::class);
+
+    Route::controller(PotroController::class)->group(function () {
+
+        Route::get('/createPotro/{status}/{parentId}/{nothiId}/{id}/{activeCode}', 'createPotro')->name('createPotro');
+        Route::get('/createPotroForReceiver/{status}/{parentId}/{nothiId}/{id}/{activeCode}', 'createPotroForReceiver')->name('createPotroForReceiver');
+
+    });
+
+
+    Route::resource('fd5Form', Fd5Controller::class);
+
+    Route::controller(Fd5Controller::class)->group(function () {
+
+        Route::post('/fd5FormStatus','fd5FormStatus')->name('fd5FormStatus');
+        Route::get('/fd5FormPdf/{id}','fd5FormPdf')->name('fd5FormPdf');
+
+    });
+
+    Route::resource('documentPresent', DocumentPresentController::class);
+    Route::resource('documentType', DocumentTypeController::class);
+    Route::resource('officeSarok', OfficeSarokController::class);
+    Route::resource('nothiPrapok', NothiPrapokController::class);
+    Route::resource('nothiAttract', NothiAttractController::class);
+    Route::resource('nothiCopy', NothiCopyController::class);
+    Route::resource('nothiApprover', NothiApproverController::class);
+    Route::resource('nothiSender', NothiSenderController::class);
+    Route::resource('sendNothi', SendNothiController::class);
+    Route::resource('receiveNothi', ReceiveNothiController::class);
+    Route::resource('executiveCommitteeInfo', ExecutiveCommitteeController::class);
+    Route::resource('constitutionInfo', ConstitutionController::class);
+    Route::resource('duplicateCertificate', DuplicateCertificateController::class);
+
+    Route::controller(DuplicateCertificateController::class)->group(function () {
+
+        Route::post('/updateStatusDuplicateCertificate','updateStatusDuplicateCertificate')->name('updateStatusDuplicateCertificate');
+        Route::get('/duplicateCertificatePdf/{id}/{title}','duplicateCertificatePdf')->name('duplicateCertificatePdf');
+
+    });
+
+
+
+    Route::controller(ConstitutionController::class)->group(function () {
+
+        Route::post('/updateStatusconstitutionInfoPdf','updateStatusconstitutionInfoPdf')->name('updateStatusconstitutionInfoPdf');
+        Route::get('/constitutionInfoPdf/{id}/{title}','constitutionInfoPdf')->name('constitutionInfoPdf');
+
+    });
+
+    Route::controller(ExecutiveCommitteeController::class)->group(function () {
+
+        Route::post('/updateStatusexecutiveCommittee','updateStatusexecutiveCommittee')->name('updateStatusexecutiveCommittee');
+        Route::get('/executiveCommitteeInfoPdf/{id}/{title}','executiveCommitteeInfoPdf')->name('executiveCommitteeInfoPdf');
+
+    });
+
+    Route::controller(NothiCopyController::class)->group(function () {
+
+        Route::post('/copyStatusUpdate', 'copyStatusUpdate')->name('copyStatusUpdate');
+        Route::get('/copySelfOfficerAjaxDelete/{id}', 'copySelfOfficerAjaxDelete')->name('copySelfOfficerAjaxDelete');
+        Route::get('/copySelfOfficerAdd', 'copySelfOfficerAdd')->name('copySelfOfficerAdd');
+        Route::get('/copyOtherOfficerAdd', 'copyOtherOfficerAdd')->name('copyOtherOfficerAdd');
+
+    });
+
+    Route::controller(NothiAttractController::class)->group(function () {
+
+        Route::post('/attractStatusUpdate', 'attractStatusUpdate')->name('attractStatusUpdate');
+        Route::get('/attractSelfOfficerAjaxDelete/{id}', 'attractSelfOfficerAjaxDelete')->name('attractSelfOfficerAjaxDelete');
+        Route::get('/attractSelfOfficerAdd', 'attractSelfOfficerAdd')->name('attractSelfOfficerAdd');
+        Route::get('/attractOtherOfficerAdd', 'attractOtherOfficerAdd')->name('attractOtherOfficerAdd');
+
+    });
+
+    Route::controller(NothiPrapokController::class)->group(function () {
+
+        Route::post('/prapokStatusUpdate', 'prapokStatusUpdate')->name('prapokStatusUpdate');
+        Route::get('/selfOfficerAjaxDelete/{id}', 'selfOfficerAjaxDelete')->name('selfOfficerAjaxDelete');
+        Route::get('/selfOfficerAdd', 'selfOfficerAdd')->name('selfOfficerAdd');
+        Route::get('/otherOfficerAdd', 'otherOfficerAdd')->name('otherOfficerAdd');
+
+    });
+
+    Route::resource('childNote', ChildNoteController::class);
+    Route::resource('parentNote', ParentNoteController::class);
+
+    Route::controller(ParentNoteController::class)->group(function () {
+
+Route::post('/addParentAttachmentNew', 'addParentAttachmentNew')->name('addParentAttachmentNew');
+        Route::get('/addParentAttachment', 'addParentAttachment')->name('addParentAttachment');
+        Route::post('/storeDataFromSenderView', 'storeDataFromSenderView')->name('storeDataFromSenderView');
+        Route::get('/addParentNote/{status}/{dakId}/{nothiId}', 'addParentNote')->name('addParentNote');
+        Route::get('/addParentNoteFromView/{status}/{dakId}/{nothiId}', 'addParentNoteFromView')->name('addParentNoteFromView');
+
+    });
+
+    Route::controller(DocumentPresentController::class)->group(function () {
+
+        Route::get('/searchResultForDak', 'searchResultForDak')->name('searchResultForDak');
+        Route::get('/deleteAdminFromEdit', 'deleteAdminFromEdit')->name('deleteAdminFromEdit');
+        Route::get('/deleteBrachFromEdit', 'deleteBrachFromEdit')->name('deleteBrachFromEdit');
+        Route::get('/savePermissionNothi', 'savePermissionNothi')->name('savePermissionNothi');
+        Route::get('/givePermissionToNothi/{id}', 'givePermissionToNothi')->name('givePermissionToNothi');
+
+
+
+    });
+
+    Route::controller(ChildNoteController::class)->group(function () {
+
+
+        Route::get('/printParagraphViewSingle/{status}/{parentId}/{nothiId}/{id}/{childIdNew}', 'printParagraphViewSingle')->name('printParagraphViewSingle');
+        Route::get('/printParagraphAddSingle/{status}/{parentId}/{nothiId}/{id}/{childIdNew}', 'printParagraphAddSingle')->name('printParagraphAddSingle');
+        Route::get('/printAllParagraph/{status}/{parentId}/{nothiId}/{id}', 'printAllParagraph')->name('printAllParagraph');
+        Route::get('/printAllParagraphFromSend/{status}/{parentId}/{nothiId}/{id}', 'printAllParagraphFromSend')->name('printAllParagraphFromSend');
+		Route::get('/getdataforNothiList', 'getdataforNothiList')->name('getdataforNothiList');
+        Route::get('/deleteAttachment/{id}', 'deleteAttachment')->name('deleteAttachment');
+        Route::delete('/deleteAllParagraph/{id}/{status}', 'deleteAllParagraph')->name('deleteAllParagraph');
+        Route::get('/givePermissionForPotroZari/{status}/{parentId}/{nothiId}/{id}/{childnote}', 'givePermissionForPotroZari')->name('givePermissionForPotroZari');
+        Route::get('/givePermissionToNote/{status}/{parentId}/{nothiId}/{id}/{childnote}', 'givePermissionToNote')->name('givePermissionToNote');
+        Route::post('/saveNothiPermissionReturn', 'saveNothiPermissionReturn')->name('saveNothiPermissionReturn');
+        Route::post('/saveNothiPermission', 'saveNothiPermission')->name('saveNothiPermission');
+        Route::get('/addChildNote/{status}/{parentId}/{nothiId}/{id}/{activeCode}', 'addChildNote')->name('addChildNote');
+        Route::get('/addChildNoteFromView/{status}/{parentId}/{nothiId}/{id}/{activeCode}', 'addChildNoteFromView')->name('addChildNoteFromView');
+        Route::get('/printPotrangso/{status}/{parentId}/{nothiId}/{id}/{sarokCode}', 'printPotrangso')->name('printPotrangso');
+        Route::get('/viewChildNote/{status}/{parentId}/{nothiId}/{id}/{activeCode}', 'viewChildNote')->name('viewChildNote');
+
+    });
+
+    Route::controller(DocumentPresentController::class)->group(function () {
+
+        Route::get('/docTypeCode', 'docTypeCode')->name('docTypeCode');
+        Route::get('/presentDocument/{status}/{id}', 'presentDocument')->name('presentDocument');
+        Route::get('/sheetAndNotes/{status}/{nothiId}/{id}', 'sheetAndNotes')->name('sheetAndNotes');
+
+    });
+
+    Route::resource('fd3Form', FD3Controller::class);
+    Route::controller(FD3Controller::class)->group(function () {
+
+        Route::get('reliefAssistanceProjectProposalPdf/{id}', 'reliefAssistanceProjectProposalPdf')->name('reliefAssistanceProjectProposalPdf');
+        Route::get('authorizationLetter/{id}', 'authorizationLetter')->name('authorizationLetter');
+        Route::get('letterFromDonorAgency/{id}', 'letterFromDonorAgency')->name('letterFromDonorAgency');
+        Route::post('/statusUpdateForFd3', 'statusUpdateForFd3')->name('statusUpdateForFd3');
+        Route::get('/fd3FormForRevision', 'fd3FormForRevision')->name('fd3FormForRevision');
+        Route::get('/acceptedFd3Form', 'acceptedFd3Form')->name('acceptedFd3Form');
+        Route::get('/verified_fd_three_form/{id}', 'verified_fd_three_form')->name('verified_fd_three_form');
+        Route::get('/fd3PdfDownload/{id}', 'fd3PdfDownload')->name('fd3PdfDownload');
+        Route::get('/fd3fd2PdfDownload/{id}', 'fd3fd2PdfDownload')->name('fd3fd2PdfDownload');
+        Route::get('/fd3fd2OtherPdfDownload/{id}', 'fd3fd2OtherPdfDownload')->name('fd3fd2OtherPdfDownload');
+
+
+    });
+
+    Route::resource('fc2Form', Fc2Controller::class);
+
+    Route::controller(Fc2Controller::class)->group(function () {
+
+        Route::get('reliefAssistanceProjectProposalPdf/{id}', 'reliefAssistanceProjectProposalPdf')->name('reliefAssistanceProjectProposalPdf');
+        Route::get('authorizationLetter/{id}', 'authorizationLetter')->name('authorizationLetter');
+        Route::get('letterFromDonorAgency/{id}', 'letterFromDonorAgency')->name('letterFromDonorAgency');
+        Route::post('/statusUpdateForFc2', 'statusUpdateForFc2')->name('statusUpdateForFc2');
+        Route::get('/fc2FormForRevision', 'fc2FormForRevision')->name('fc2FormForRevision');
+        Route::get('/acceptedFc2Form', 'acceptedFc2Form')->name('acceptedFc2Form');
+        Route::get('/fc2PdfDownload/{id}', 'fc2PdfDownload')->name('fc2PdfDownload');
+        Route::get('/verified_fc_two_form/{id}', 'verified_fc_two_form')->name('verified_fc_two_form');
+        Route::get('/fc2fd2PdfDownload/{id}', 'fc2fd2PdfDownload')->name('fc2fd2PdfDownload');
+        Route::get('/fc2fd2OtherPdfDownload/{id}', 'fc2fd2OtherPdfDownload')->name('fc2fd2OtherPdfDownload');
+
+
+    });
+
+    Route::resource('fc1Form', Fc1Controller::class);
+
+    Route::controller(Fc1Controller::class)->group(function () {
+
+        Route::get('reliefAssistanceProjectProposalPdf/{id}', 'reliefAssistanceProjectProposalPdf')->name('reliefAssistanceProjectProposalPdf');
+        Route::get('authorizationLetter/{id}', 'authorizationLetter')->name('authorizationLetter');
+        Route::get('letterFromDonorAgency/{id}', 'letterFromDonorAgency')->name('letterFromDonorAgency');
+        Route::post('/statusUpdateForFc1', 'statusUpdateForFc1')->name('statusUpdateForFc1');
+        Route::get('/fc1FormForRevision', 'fc1FormForRevision')->name('fc1FormForRevision');
+        Route::get('/acceptedFc1Form', 'acceptedFc1Form')->name('acceptedFc1Form');
+        Route::get('/fc1PdfDownload/{id}', 'fc1PdfDownload')->name('fc1PdfDownload');
+        Route::get('/verified_fc_one_form/{id}', 'verified_fc_one_form')->name('verified_fc_one_form');
+        Route::get('/fc1fd2PdfDownload/{id}', 'fc1fd2PdfDownload')->name('fc1fd2PdfDownload');
+        Route::get('/fc1fd2OtherPdfDownload/{id}', 'fc1fd2OtherPdfDownload')->name('fc1fd2OtherPdfDownload');
+
+
+    });
+
+    Route::resource('fd7Form', FD7Controller::class);
+
+    Route::controller(FD7Controller::class)->group(function () {
+
+        Route::get('reliefAssistanceProjectProposalPdf/{id}', 'reliefAssistanceProjectProposalPdf')->name('reliefAssistanceProjectProposalPdf');
+        Route::get('authorizationLetter/{id}', 'authorizationLetter')->name('authorizationLetter');
+        Route::get('letterFromDonorAgency/{id}', 'letterFromDonorAgency')->name('letterFromDonorAgency');
+        Route::post('/statusUpdateForFd7', 'statusUpdateForFd7')->name('statusUpdateForFd7');
+        Route::get('/fd7FormForRevision', 'fd7FormForRevision')->name('fd7FormForRevision');
+        Route::get('/acceptedFd7Form', 'acceptedFd7Form')->name('acceptedFd7Form');
+        Route::get('/fd7PdfDownload/{id}', 'fd7PdfDownload')->name('fd7PdfDownload');
+        Route::get('/fd7fd2PdfDownload/{id}', 'fd7fd2PdfDownload')->name('fd7fd2PdfDownload');
+        Route::get('/fd7fd2OtherPdfDownload/{id}', 'fd7fd2OtherPdfDownload')->name('fd7fd2OtherPdfDownload');
+
+
+    });
+
+
+    Route::resource('fd6Form', FD6Controller::class);
+
+    Route::controller(FD6Controller::class)->group(function () {
+
+        Route::post('/statusUpdateForFd6', 'statusUpdateForFd6')->name('statusUpdateForFd6');
+        Route::get('/fd6FormForRevision', 'fd6FormForRevision')->name('fd6FormForRevision');
+        Route::get('/acceptedFd6Form', 'acceptedFd6Form')->name('acceptedFd6Form');
+        Route::get('/fd6PdfDownload/{id}', 'fd6PdfDownload')->name('fd6PdfDownload');
+        Route::get('/fd2PdfDownload/{id}', 'fd2PdfDownload')->name('fd2PdfDownload');
+        Route::get('/fd2OtherPdfDownload/{id}', 'fd2OtherPdfDownload')->name('fd2OtherPdfDownload');
+
+
+    });
+
+    Route::get('/', [DashBoardController::class, 'index'])->name('admin.dashboard');
+
+
+    Route::resource('noticeList', NoticeController::class);
+    Route::resource('branchList', BranchController::class);
+    Route::resource('dakBranchList', PostController::class);
+
+
+    Route::controller(PostController::class)->group(function () {
+
+        Route::get('/all_dak_list', 'all_dak_list')->name('all_dak_list');
+        Route::get('/sent_dak', 'sent_dak')->name('receiver_dak');
+        Route::get('/main_doc_download/{id}', 'main_doc_download')->name('main_doc_download');
+        Route::get('/deleteMemberList/{status}/{id}', 'deleteMemberList')->name('deleteMemberList');
+        Route::get('/deleteMemberListAjax', 'deleteMemberListAjax')->name('deleteMemberListAjax');
+        Route::get('/createSeal/{status}/{id}', 'createSeal')->name('createSeal');
+        Route::get('/dakListFirstStep', 'dakListFirstStep')->name('dakListFirstStep');
+        Route::post('/dakListSecondStep', 'dakListSecondStep')->name('dakListSecondStep');
+        Route::get('/showDataAll/{status}/{id}', 'showDataAll')->name('showDataAll');
+        Route::get('/showDataDesignationWiseOne', 'showDataDesignationWiseOne')->name('showDataDesignationWiseOne');
+        Route::get('/showDataDesignationWise', 'showDataDesignationWise')->name('showDataDesignationWise');
+        Route::get('/showDataBranchWise', 'showDataBranchWise')->name('showDataBranchWise');
+
+    });
+
+    Route::controller(BranchController::class)->group(function () {
+        Route::get('/checkBranch', 'checkBranch')->name('checkBranch');
+        Route::get('/showBranchStep', 'showBranchStep')->name('showBranchStep');
+
+    });
+
+
+    Route::resource('designationList', DesignationController::class);
+
+    Route::controller(DesignationController::class)->group(function () {
+        Route::get('/checkDesignation', 'checkDesignation')->name('checkDesignation');
+        Route::get('/getDesignationFromBranch', 'getDesignationFromBranch')->name('getDesignationFromBranch');
+    });
+
+
+    Route::resource('assignedEmployee', DesignationStepController::class);
+    Route::resource('country', CountryController::class);
+    Route::resource('civilInfo', CountryController::class);
+    Route::resource('fd9Form', Fd9Controller::class);
+
+    Route::controller(Fd9Controller::class)->group(function () {
+
+        Route::get('/singlePdfDownload/{id}','singlePdfDownload')->name('singlePdfDownload');
+
+
+        Route::get('/verified_fd_nine_download/{id}','verified_fd_nine_download')->name('verified_fd_nine_download');
+        Route::post('/statusUpdateForFd9', 'statusUpdateForFd9')->name('statusUpdateForFd9');
+        Route::post('/submitForCheck','submitForCheck')->name('submitForCheck');
+        Route::get('/statusCheck','statusCheck')->name('statusCheck');
+        Route::get('/downloadForwardingLetter/{id}','downloadForwardingLetter')->name('downloadForwardingLetter');
+        Route::post('/postForwardingLetter','postForwardingLetter')->name('postForwardingLetter');
+        Route::post('/postForwardingLetterForEdit','postForwardingLetterForEdit')->name('postForwardingLetterForEdit');
+        Route::post('/forwardingLetterPost','forwardingLetterPost')->name('forwardingLetterPost');
+        Route::get('/fdNinePdfDownload/{id}','fdNinePdfDownload')->name('fdNinePdfDownload');
+        Route::get('/nVisaDocumentDownload/{cat}/{id}', 'nVisaDocumentDownload')->name('nVisaDocumentDownload');
+
+    });
+
+    Route::resource('fd9OneForm', Fd9OneController::class);
+
+    Route::controller(Fd9OneController::class)->group(function () {
+        Route::get('/forwardingLetterForNothi/{id}', 'forwardingLetterForNothi')->name('forwardingLetterForNothi');
+        Route::get('/verified_fd_nine_one_download/{id}','verified_fd_nine_one_download')->name('verified_fd_nine_one_download');
+        Route::post('/statusUpdateForFd9One', 'statusUpdateForFd9One')->name('statusUpdateForFd9One');
+        Route::get('/fd9OneDownload/{cat}/{id}', 'fd9OneDownload')->name('fd9OneDownload');
+    });
 
     //register_list_view
 
-    Route::post('/update_status_reg_form', [RegisterController::class, 'update_status_reg_form'])->name('update_status_reg_form');
+    Route::controller(RegisterController::class)->group(function () {
+
+        Route::post('/updateStatusRegForm', 'updateStatusRegForm')->name('updateStatusRegForm');
+        Route::get('/printCertificateView','printCertificateView')->name('printCertificateView');
+        Route::get('/printCertificateViewDemo','printCertificateViewDemo')->name('printCertificateViewDemo');
+        Route::get('/printCertificateViewRenew','printCertificateViewRenew')->name('printCertificateViewRenew');
+        Route::get('/printCertificateViewDemoRenew','printCertificateViewDemoRenew')->name('printCertificateViewDemoRenew');
+        Route::get('/formOnePdfMain/{id}', 'formOnePdfMain')->name('formOnePdfMain');
+        Route::get('/formOnePdfMainForeign/{id}','formOnePdfMainForeign')->name('formOnePdfMainForeign');
+        Route::get('/formOnePdf/{main_id}/{id}','formOnePdf')->name('formOnePdf');
+        Route::get('/formEightPdf/{main_id}','formEightPdf')->name('formEightPdf');
+        Route::get('/sourceOfFund/{id}','sourceOfFund')->name('sourceOfFund');
+        Route::get('/otherPdfView/{id}','otherPdfView')->name('otherPdfView');
+        Route::get('/ngoMemberDocPdfView/{id}','ngoMemberDocPdfView')->name('ngoMemberDocPdfView');
+        Route::get('/ngoDocPdfView/{id}','ngoDocPdfView')->name('ngoDocPdfView');
+        Route::get('/renewPdfList/{main_id}/{id}','renewPdfList')->name('renewPdfList');
+        Route::get('/newRegistrationList','newRegistrationList')->name('newRegistrationList');
+        Route::get('/revisionRegistrationList','revisionRegistrationList')->name('revisionRegistrationList');
+        Route::get('/alreadyRegistrationList','alreadyRegistrationList')->name('alreadyRegistrationList');
+        Route::get('/registrationView/{id}','registrationView')->name('registrationView');
 
 
-    Route::get('/print_certificate_view', [RegisterController::class, 'print_certificate_view'])->name('print_certificate_view');
+    });
+
+    Route::controller(NameCangeController::class)->group(function () {
+
+        Route::get('/printCertificateViewName','printCertificateViewName')->name('printCertificateViewName');
+        Route::get('/printCertificateViewDemoName','printCertificateViewDemoName')->name('printCertificateViewDemoName');
+        Route::get('/nameChangeDoc/{id}','nameChangeDoc')->name('nameChangeDoc');
+        Route::get('/newNameChangeList','newNameChangeList')->name('newNameChangeList');
+        Route::get('/revisionNameChangeList','revisionNameChangeList')->name('revisionNameChangeList');
+        Route::get('/alreadNameChangeList','alreadNameChangeList')->name('alreadNameChangeList');
+        Route::get('/nameChangeView/{id}','nameChangeView')->name('nameChangeView');
+        Route::post('/updateStatusNameChangeForm','updateStatusNameChangeForm')->name('updateStatusNameChangeForm');
+    });
 
 
-    Route::get('/form_one_pdf/{main_id}/{id}', [RegisterController::class, 'form_one_pdf'])->name('form_one_pdf');
-    Route::get('/form_eight_pdf/{main_id}', [RegisterController::class, 'form_eight_pdf'])->name('form_eight_pdf');
-    Route::get('/source_of_fund/{id}', [RegisterController::class, 'source_of_fund'])->name('source_of_fund');
-    Route::get('/other_pdf_view/{id}', [RegisterController::class, 'other_pdf_view'])->name('other_pdf_view');
+    Route::controller(RenewController::class)->group(function () {
 
-    Route::get('/ngo_member_doc__pdf_view/{id}', [RegisterController::class, 'ngo_member_doc__pdf_view'])->name('ngo_member_doc__pdf_view');
-    Route::get('/ngo_doc__pdf_view/{id}', [RegisterController::class, 'ngo_doc__pdf_view'])->name('ngo_doc__pdf_view');
-    Route::get('/renew_pdf_list/{main_id}/{id}', [RegisterController::class, 'renew_pdf_list'])->name('renew_pdf_list');
+        Route::get('/newRenewList','newRenewList')->name('newRenewList');
+        Route::get('/revisionRenewList','revisionRenewList')->name('revisionRenewList');
+        Route::get('/alreadyRenewList','alreadyRenewList')->name('alreadyRenewList');
+        Route::get('/renewView/{id}','renewView')->name('renewView');
+        Route::post('/updateStatusRenewForm','updateStatusRenewForm')->name('updateStatusRenewForm');
+        Route::get('viewFormEightPdf/{id}', 'viewFormEightPdf')->name('viewFormEightPdf');
+        Route::get('changeAcNumberDownload/{id}', 'changeAcNumberDownload')->name('changeAcNumberDownload');
+        Route::get('dueVatPdfDownload/{id}', 'dueVatPdfDownload')->name('dueVatPdfDownload');
+        Route::get('copyOfChalanPdfDownload/{id}', 'copyOfChalanPdfDownload')->name('copyOfChalanPdfDownload');
+        Route::get('yearlyBudgetPdfDownload/{id}', 'yearlyBudgetPdfDownload')->name('yearlyBudgetPdfDownload');
+        Route::get('foreginPdfDownload/{id}', 'foreginPdfDownload')->name('foreginPdfDownload');
+        Route::get('verifiedFdEightDownload/{id}', 'verifiedFdEightDownload')->name('verifiedFdEightDownload');
+        Route::get('renewalFileDownload/{title}/{id}', 'renewalFileDownload')->name('renewalFileDownload');
+        Route::get('changeAcNumberDownloadOld/{id}', 'changeAcNumberDownloadOld')->name('changeAcNumberDownloadOld');
+        Route::get('dueVatPdfDownloadOld/{id}', 'dueVatPdfDownloadOld')->name('dueVatPdfDownloadOld');
+        Route::get('copyOfChalanPdfDownloadOld/{id}', 'copyOfChalanPdfDownloadOld')->name('copyOfChalanPdfDownloadOld');
+        Route::get('yearlyBudgetPdfDownloadOld/{id}', 'yearlyBudgetPdfDownloadOld')->name('yearlyBudgetPdfDownloadOld');
+        Route::get('foreginPdfDownloadOld/{id}', 'foreginPdfDownloadOld')->name('foreginPdfDownloadOld');
+        Route::get('verifiedFdEightDownloadOld/{id}', 'verifiedFdEightDownloadOld')->name('verifiedFdEightDownloadOld');
 
-
-
-
-    Route::get('/new_name_change_list', [NameCangeController::class, 'new_name_change_list'])->name('new_name_change_list');
-    Route::get('/revision_name_change_list', [NameCangeController::class, 'revision_name_change_list'])->name('revision_name_change_list');
-    Route::get('/already_name_change_list', [NameCangeController::class, 'already_name_change_list'])->name('already_name_change_list');
-    Route::get('/name_change_view/{id}', [NameCangeController::class, 'name_change_view'])->name('name_change_view');
-    Route::post('/update_status_name_change_form', [NameCangeController::class, 'update_status_name_change_form'])->name('update_status_name_change_form');
-
-
-    Route::get('/new_renew_list', [RenewController::class, 'new_renew_list'])->name('new_renew_list');
-    Route::get('/revision_renew_list', [RenewController::class, 'revision_renew_list'])->name('revision_renew_list');
-    Route::get('/already_renew_list', [RenewController::class, 'already_renew_list'])->name('already_renew_list');
-    Route::get('/renew_view/{id}', [RenewController::class, 'renew_view'])->name('renew_view');
-    Route::post('/update_status_renew_form', [RenewController::class, 'update_status_renew_form'])->name('update_status_renew_form');
-
+    });
 
 
 
-    Route::get('/new_registration_list', [RegisterController::class, 'new_registration_list'])->name('new_registration_list');
-    Route::get('/revision_registration_list', [RegisterController::class, 'revision_registration_list'])->name('revision_registration_list');
-    Route::get('/already_registration_list', [RegisterController::class, 'already_registration_list'])->name('already_registration_list');
-    Route::get('/registration_view/{id}', [RegisterController::class, 'registration_view'])->name('registration_view');
     //end register_list_view
 
-
-    Route::get('/get_search_type', [ReportController::class, 'get_search_type'])->name('get_search_type');
-
-    Route::get('/get_search_type_sell', [ReportController::class, 'get_search_type_sell'])->name('get_search_type_sell');
-
-
-
-    Route::get('/get_search_type_client', [ReportController::class, 'get_search_type_client'])->name('get_search_type_client');
-
-
-    Route::get('/report_product_monthly', [ReportController::class, 'report_product_monthly'])->name('report_product_monthly');
-    Route::get('/report_product_yearly', [ReportController::class, 'report_product_yearly'])->name('report_product_yearly');
-    Route::get('/report_product_datewise', [ReportController::class, 'report_product_datewise'])->name('report_product_datewise');
-
-
-
-    Route::get('/report_product_monthly_sell', [ReportController::class, 'report_product_monthly_sell'])->name('report_product_monthly_sell');
-    Route::get('/report_product_yearly_sell', [ReportController::class, 'report_product_yearly_sell'])->name('report_product_yearly_sell');
-    Route::get('/report_product_datewise_sell', [ReportController::class, 'report_product_datewise_sell'])->name('report_product_datewise_sell');
-
-
-    Route::get('/report_product_monthly_client', [ReportController::class, 'report_product_monthly_client'])->name('report_product_monthly_client');
-    Route::get('/report_product_yearly_client', [ReportController::class, 'report_product_yearly_client'])->name('report_product_yearly_client');
-    Route::get('/report_product_datewise_client', [ReportController::class, 'report_product_datewise_client'])->name('report_product_datewise_client');
-
-    Route::get('/report_product', [ReportController::class, 'report_product'])->name('report_product');
-    Route::get('/sell_report', [ReportController::class, 'sell_report'])->name('sell_report');
-    Route::get('/client_report', [ReportController::class, 'client_report'])->name('client_report');
-
-
-
-
-Route::get('search_food_item', [ProductController::class, 'search_food_item'])->name('search_food_item');
-Route::get('product_list_ajax', [ProductController::class, 'product_list_ajax'])->name('product_list_ajax');
-Route::get('product_information_create', [ProductController::class, 'create'])->name('admin.product_information.create');
-Route::get('product_information_edit/{id}', [ProductController::class, 'edit'])->name('admin.product_information.edit');
-Route::get('product_information_view/{id}', [ProductController::class, 'view'])->name('admin.product_information.view');
-Route::get('product_information', [ProductController::class, 'index'])->name('admin.product_information');
-Route::post('product_information/store', [ProductController::class, 'store'])->name('admin.product_information.store');
-Route::post('product_information/update', [ProductController::class, 'update'])->name('admin.product_information.update');
-Route::post('product_information/delete/{id}', [ProductController::class, 'delete'])->name('admin.product_information.delete');
-//unit
-
-
-
-
-    Route::get('system_information', [SystemInformationController::class, 'index'])->name('admin.system_information');
-    Route::post('system_information/store', [SystemInformationController::class, 'store'])->name('admin.system_information.store');
-    Route::post('system_information/update', [SystemInformationController::class, 'update'])->name('admin.system_information.update');
-    Route::post('system_information/delete/{id}', [SystemInformationController::class, 'delete'])->name('admin.system_information.delete');
-
-    Route::get('roles', [RolesController::class, 'index'])->name('admin.roles');
-    Route::get('roles/create', [RolesController::class, 'create'])->name('admin.roles.create');
-    Route::post('roles/store', [RolesController::class, 'store'])->name('admin.roles.store');
-    Route::get('roles/edit/{id}', [RolesController::class, 'edit'])->name('admin.roles.edit');
-    Route::post('roles/update', [RolesController::class, 'update'])->name('admin.roles.update');
-
-    Route::delete('roles/delete/{id}', [RolesController::class, 'delete'])->name('admin.roles.delete');
-
-
-    Route::get('users', [UsersController::class, 'index'])->name('admin.users');
-    Route::get('users/create', [UsersController::class, 'create'])->name('admin.users.create');
-    Route::post('users/store', [UsersController::class, 'store'])->name('admin.users.store');
-    Route::get('users/edit/{id}', [UsersController::class, 'edit'])->name('admin.users.edit');
-    Route::post('users/update/{id}', [UsersController::class, 'update'])->name('admin.users.update');
-    Route::delete('users/delete/{id}', [UsersController::class, 'delete'])->name('admin.users.delete');
-
-
-    Route::get('permission', [PermissionController::class, 'index'])->name('admin.permission');
-    Route::get('permission/create', [PermissionController::class, 'create'])->name('admin.permission.create');
-    Route::post('permission/store', [PermissionController::class, 'store'])->name('admin.permission.store');
-    Route::get('permission/edit/{id}', [PermissionController::class, 'edit'])->name('admin.permission.edit');
-    Route::get('permission/view/{gname}', [PermissionController::class, 'view'])->name('admin.permission.view');
-    Route::post('permission/update', [PermissionController::class, 'update'])->name('admin.permission.update');
-
-    Route::delete('permission/delete/{id}', [PermissionController::class, 'delete'])->name('admin.permission.delete');
-
-
-
-
-    Route::get('admins', [AdminsController::class, 'index'])->name('admin.admins');
-    Route::get('admins/create', [AdminsController::class, 'create'])->name('admin.admins.create');
-    Route::post('admins/store', [AdminsController::class, 'store'])->name('admin.admins.store');
-    Route::get('admins/edit/{id}', [AdminsController::class, 'edit'])->name('admin.admins.edit');
-    Route::post('admins/update', [AdminsController::class, 'update'])->name('admin.admins.update');
-    Route::delete('admins/delete/{id}', [AdminsController::class, 'delete'])->name('admin.admins.delete');
-
-
-    Route::get('profile', [ProfileController::class, 'index'])->name('admin.profile');
-    Route::get('profile/edit/{id}', [ProfileController::class, 'edit'])->name('admin.profile.edit');
-    Route::put('profile/update/{id}', [ProfileController::class, 'update'])->name('admin.profile.update');
-
-    Route::post('password/update',[ProfileController::class, 'updatePassword'])->name('admin.password.update');
-
-
-
-    Route::get('settings',[ProfileController::class, 'setting'])->name('admin.settings');
-    Route::get('view_profile',[ProfileController::class, 'profile_view'])->name('admin.profile_view');
-
-
-
-
-
-
-
-    // Login Routes
-    Route::get('/login',[LoginController::class,'showLoginForm'])->name('admin.login');
-    Route::post('/login/submit',[LoginController::class,'login'])->name('admin.login.submit');
-
-    // Logout Routes
+    Route::resource('login', LoginController::class);
     Route::post('/logout/submit',[LoginController::class,'logout'])->name('admin.logout.submit');
+    Route::resource('role', RoleController::class);
+    Route::resource('profile', ProfileController::class);
+    Route::resource('permission', PermissionController::class);
+    Route::resource('user', AdminController::class);
 
-    Route::get('/recovery_password',[SessionController::class,'recovery_password'])->name('admin.recovery_password');
+  Route::controller(AdminController::class)->group(function () {
 
-    Route::get('/logout_session',[SessionController::class,'logout_session'])->name('admin.logout_session');
-    Route::get('/lock_screen/{email}',[SessionController::class,'lock_screen'])->name('admin.lock_screen');
-    Route::post('/login_from_session',[SessionController::class,'login_from_session'])->name('admin.login_from_session');
-    // Forget Password Routes
+        Route::get('/checkWorkingDay', 'checkWorkingDay')->name('checkWorkingDay');
+        Route::get('/getAdminDetail', 'getAdminDetail')->name('getAdminDetail');
+        Route::post('/employeeEndDatePost', 'employeeEndDatePost')->name('employeeEndDatePost');
+        Route::get('/employeeEndDate', 'employeeEndDate')->name('employeeEndDate');
+        Route::post('/postPasswordChange', 'postPasswordChange')->name('postPasswordChange');
+        Route::get('/accountPasswordChange/{id}', 'accountPasswordChange')->name('accountPasswordChange');
+        Route::post('/checkMailPost', 'checkMailPost')->name('checkMailPost');
+        Route::get('/forgetPassword', 'forgetPassword')->name('forgetPassword');
+        Route::get('/checkMailForPassword', 'checkMailForPassword')->name('checkMailForPassword');
+        Route::get('/newEmailNotify', 'newEmailNotify')->name('newEmailNotify');
+        Route::post('/postPasswordChange', 'postPasswordChange')->name('postPasswordChange');
+        Route::get('/accountPasswordChange/{id}', 'accountPasswordChange')->name('accountPasswordChange');
 
-    Route::get('/check_mail_from_list',[ForgetPasswordController::class,'check_mail_from_list'])->name('check_mail_from_list');
-    Route::post('/send_mail_get_from_list',[ForgetPasswordController::class,'send_mail_get_from_list'])->name('send_mail_get_from_list');
-    Route::get('/password_reset_page/{id}',[ForgetPasswordController::class,'password_reset_page'])->name('password_reset_page');
-    Route::get('/successfully_mail_send/{id}',[ForgetPasswordController::class,'successfully_mail_send'])->name('successfully_mail_send');
+    });
 
-    Route::post('/password_change_confirmed',[ForgetPasswordController::class,'password_change_confirmed'])->name('password_change_confirmed');
+    Route::resource('setting', SettingController::class);
 
-    Route::get('/password/reset',[ForgetPasswordController::class,'showLinkRequestForm'])->name('admin.password.request');
+    Route::controller(SettingController::class)->group(function () {
+
+
+        Route::get('/error_404', 'error_404')->name('error_404');
+
+        Route::get('/basicInformationEdit', 'basicInformationEdit')->name('basicInformationEdit');
+        Route::get('/digitalSignatureEdit', 'digitalSignatureEdit')->name('digitalSignatureEdit');
+        Route::post('/digitalSignatureUpdate', 'digitalSignatureUpdate')->name('digitalSignatureUpdate');
+        Route::get('/passwordEdit', 'passwordEdit')->name('passwordEdit');
+        Route::post('/passwordUpdate', 'passwordUpdate')->name('passwordUpdate');
+        Route::get('/profilePictureEdit', 'profilePictureEdit')->name('profilePictureEdit');
+        Route::post('/profilePictureUpdate', 'profilePictureUpdate')->name('profilePictureUpdate');
+
+    });
+
+    Route::resource('systemInformation', SystemInformationController::class);
+
+
+
 
 });
