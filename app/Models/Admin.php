@@ -2,21 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Admin extends Authenticatable
 {
-    use HasFactory,Notifiable, HasRoles;
+    use HasFactory,Notifiable,HasRoles;
 
-    public $table = "admins";
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+
+     protected $table = "admins";
 
     protected $fillable = [
-        'name', 'email', 'password',
+        'admin_name','admin_name_ban','admin_mobile','designation_list_id','branch_id',
+        'admin_sign','admin_job_start_date','admin_job_end_date','admin_image',
+        'email', 'password','admin_job_end_start_date'
     ];
 
     /**
@@ -37,7 +44,8 @@ class Admin extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public static function getpermissionGroups()
+
+     public static function getpermissionGroups()
     {
         $permission_groups = DB::table('permissions')
             ->select('group_name as name')
@@ -66,4 +74,16 @@ class Admin extends Authenticatable
         }
         return $hasPermission;
     }
+
+
+
+    public function jobHistory()
+    {
+        return $this->hasMany(JobHistory::class,'admin_id');
+    }
+
+
+
+
+
 }
